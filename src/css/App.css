@@ -1,0 +1,103 @@
+/* Basic setup */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 23px;
+  background-image: url('https://www.jaquar.com/images/uploaded/Spa-Like%20Bathroom/image11.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #333;
+}
+
+
+/* Root layout wrapper */
+#root,
+#root-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Make sure content stretches */
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar always at the top */
+.navbar {
+  background-color: #004d40;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+.navbar-links {
+  display: flex;
+  gap: 1rem;
+}
+.navbar-links a,
+.navbar-links button {
+  color: white;
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  transition: background 0.3s;
+}
+.navbar-links a:hover,
+.navbar-links button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+/* Main content area */
+.page {
+  flex: 1;
+  padding: 2rem;
+  text-align: center;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Home section (adjusted height and spacing) */
+.home {
+  background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') center/cover no-repeat;
+  color: #004d40;
+  animation: fadeInUp 1s ease-out;
+  padding: 5rem 2rem 2rem;
+  min-height: calc(100vh - 180px); /* 100vh minus approx navbar+footer height */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Footer sticks to bottom */
+.footer {
+  background-color: #004d40;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  flex-shrink: 0;
+}
