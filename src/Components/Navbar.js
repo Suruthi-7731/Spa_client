@@ -1,17 +1,25 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const Navbar = ({ openModal }) => {
+const Navbar = ({ openModal, isLoggedIn, handleLogout, cartCount }) => {
+  const navigate = useNavigate();
+
   return (
     <nav className="navbar">
-      <div className="navbar-brand">Spa & Wellness</div>
+      <div className="navbar-brand">E-Commerce Website</div>
+
       <div className="navbar-links">
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/about">About</NavLink>
-        <NavLink to="/services">Services</NavLink>
-        <NavLink to="/contact">Contact</NavLink>
-        <button onClick={() => openModal('login')}>Login</button>
-        <button onClick={() => openModal('signup')}>Sign Up</button>
+        {isLoggedIn ? (
+          <>
+            <button onClick={() => navigate('/cart')}>Your Cart ({cartCount})</button>
+            <button onClick={handleLogout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <button onClick={() => openModal('login')}>Login</button>
+            <button onClick={() => openModal('signup')}>Sign Up</button>
+          </>
+        )}
       </div>
     </nav>
   );

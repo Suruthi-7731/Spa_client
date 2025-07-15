@@ -1,83 +1,68 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import Signup from './Signup';
 
-const Login = () => {
-  const [email1, setEmail1] = useState('');
-  const [password1, setPassword1] = useState('');
-  const [signup, setSignup] = useState(false);
-  const navigate = useNavigate();
+const Login = ({ closeModal, onLoginSuccess }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
 
-  // Show Signup component if user clicks "Sign up"
-  if (signup) {
-    return <Signup />;
-  }
+  const validateEmail = (email) => {
+    const regex = /^[\w.%+-]+@[a-zA-Z\d.-]+\.(com|in|edu)$/;
+    return regex.test(email);
+  };
 
-  function handlePost1() {
-    axios
-      .post('http://localhost:5000/fullstack/login', {
-        email: email1,
-        password: password1
-      })
-      .then(() => {
-        alert('Logged in!');
-        setEmail1('');
-        setPassword1('');
-        navigate('/home');
-      })
-      .catch((err) => {
-        if (err.response && err.response.data.message) {
-          alert(err.response.data.message);
-        } else {
-          console.error(err);
-          alert('Login failed. Please try again.');
-        }
-      });
-  }
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z]).{6,10}$/;
+    return regex.test(password);
+  };
 
-  // ✅ Render Login Form
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const newErrors = {};
+    if (!validateEmail(email)) newErrors.email = 'Invalid email (must end with .com or .in)';
+    if (!validatePassword(password)) {
+      newErrors.password =
+        'Password must be 6–10 characters with at least 1 uppercase and 1 lowercase letter';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:5050/fullstack/login', { email, password });
+      alert('Login successful');
+      onLoginSuccess(email);
+      closeModal();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Login failed');
+    }
+  };
+
   return (
-    <div className='signup-container'>
-      <div className='signup-form'>
-        <h2>Login Page</h2>
-
-        <label htmlFor='Email'>Email: </label>
-        <br />
+    <div className="auth-container">
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
         <input
-          type='text'
-          value={email1}
-          onChange={(e) => setEmail1(e.target.value)}
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <br />
+        {errors.email && <p className="error">{errors.email}</p>}
 
-        <label htmlFor='pass'>Password: </label>
-        <br />
         <input
-          type='password'
-          value={password1}
-          onChange={(e) => setPassword1(e.target.value)}
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <br />
+        {errors.password && <p className="error">{errors.password}</p>}
 
-        <button onClick={handlePost1}>Submit</button>
-
-        <div className='register'>
-          <p>
-            Create a new account{' '}
-            <span
-              style={{
-                color: 'blue',
-                cursor: 'pointer',
-                textDecoration: 'underline'
-              }}
-              onClick={() => setSignup(true)}
-            >
-              Sign-up
-            </span>
-          </p>
-        </div>
-      </div>
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 };

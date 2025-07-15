@@ -1,50 +1,52 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
-
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Navbar from './Components/Navbar';
-import Footer from './Components/Footer';
 import Modal from './Components/Modal';
-
-import Home from './pages/Home';
-import About from './pages/About';
-import Services from './pages/Services';
-import Contact from './pages/Contact';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
+import CategoryList from './CategoryList';
+import ProductDisplay from './ProductDisplay';
+import YourCart from './YourCart';
+import './css/App.css';
 
 const App = () => {
-const [modalType, setModalType] = useState(null);
+  const [modalType, setModalType] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [cart, setCart] = useState([]);
 
-const openModal = (type) => setModalType(type); // 'login' or 'signup'
-const closeModal = () => setModalType(null);
 
-return (
-<div className="app">
-{/* Navbar with modal trigger */}
-<Navbar openModal={openModal} />
- <main>
-    <Routes>
-      {/* Default route shows Signup */}
-      <Route path="/" element={<Signup />} />
+  const openModal = (type) => setModalType(type);
+  const closeModal = () => setModalType(null);
 
-      {/* Auth routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/home" element={<Home />} />
+  const handleLoginSuccess = (email) => {
+    setIsLoggedIn(true);
+    setUserEmail(email);
+    closeModal();
+  };
 
-      {/* Other static pages */}
-      <Route path="/about" element={<About />} />
-      <Route path="/services" element={<Services />} />
-      <Route path="/contact" element={<Contact />} />
-    </Routes>
-  </main>
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCart([]);
+    setUserEmail('');
+  };
 
-  {/* Footer */}
-  <Footer />
+  const addToCart = (product) => {
+    setCart((prev) => [...prev, product]);
+    alert(`${product.name} added to cart`);
+  };
 
-  {/* Conditional modal rendering */}
-  {modalType && <Modal type={modalType} closeModal={closeModal} />}
-</div>
-);
+  return (
+    <Router>
+      <Navbar openModal={openModal} isLoggedIn={isLoggedIn} handleLogout={handleLogout} cartCount={cart.length} />
+      {modalType && (
+        <Modal type={modalType} closeModal={closeModal} onLoginSuccess={handleLoginSuccess} />
+      )}
+      <Routes>
+        <Route path="/" element={isLoggedIn ? <CategoryList /> : <div className="welcome-message">Please login to view products.</div>} />
+        <Route path="/category/:categoryName" element={<ProductDisplay userEmail={userEmail} addToCart={addToCart} />} />
+        <Route path="/cart" element={<YourCart userEmail={userEmail} />} />
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;
